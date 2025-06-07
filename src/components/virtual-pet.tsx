@@ -60,10 +60,11 @@ const VirtualPet: React.FC<VirtualPetProps> = ({
       ? "Happy"
       : "Needs Care";
 
-  let petName = getPetName(stats?.petType || "cat");
+      const statsPetType = stats?.petType || "cat";
+  let petName = getPetName(statsPetType);
   petName = petName.charAt(0).toUpperCase() + petName.slice(1);
   const petType =
-    stats.petType.charAt(0).toUpperCase() + stats.petType.slice(1);
+    statsPetType.charAt(0).toUpperCase() + statsPetType.slice(1);
 
   return (
     <div className="text-center p-4 bg-gradient-to-r from-pink-100 to-purple-100 rounded-xl">

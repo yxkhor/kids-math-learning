@@ -32,20 +32,34 @@ const KidsMathGame = () => {
   // Game statistics
   const [stats, setStats] = useState<GameStats>(() => {
     const saved = localStorage.getItem("stats");
-    return saved
-      ? JSON.parse(saved)
-      : {
-          petType: "cat",
-          totalQuestions: 0,
-          correctAnswers: 0,
-          stars: 0,
-          level: 1,
-          achievements: [],
-          petHappiness: 50,
-          currentStreak: 0,
-          bestStreak: 0,
-          difficulty: "easy",
-        };
+    if (saved) {
+    const parsed = JSON.parse(saved);
+    // Ensure petType exists, default to "cat" if missing
+    return {
+      petType: parsed.petType ?? "cat",
+      totalQuestions: parsed.totalQuestions ?? 0,
+      correctAnswers: parsed.correctAnswers ?? 0,
+      stars: parsed.stars ?? 0,
+      level: parsed.level ?? 1,
+      achievements: parsed.achievements ?? [],
+      petHappiness: parsed.petHappiness ?? 50,
+      currentStreak: parsed.currentStreak ?? 0,
+      bestStreak: parsed.bestStreak ?? 0,
+      difficulty: parsed.difficulty ?? "easy",
+    };
+  }
+  return {
+    petType: "cat",
+    totalQuestions: 0,
+    correctAnswers: 0,
+    stars: 0,
+    level: 1,
+    achievements: [],
+    petHappiness: 50,
+    currentStreak: 0,
+    bestStreak: 0,
+    difficulty: "easy",
+  };
   });
 
   useEffect(() => {

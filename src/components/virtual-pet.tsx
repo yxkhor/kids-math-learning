@@ -4,7 +4,7 @@ import { getPetName } from "../utils/get-pet-name";
 
 interface VirtualPetProps {
   stats: GameStats;
-  getDifficultyRange: () => { min: number; max: number; label: string };  
+  getDifficultyRange: () => { min: number; max: number; label: string };
   onChangePetType: () => void;
 }
 
@@ -60,16 +60,14 @@ const VirtualPet: React.FC<VirtualPetProps> = ({
       ? "Happy"
       : "Needs Care";
 
-let petName = getPetName(stats.petType);
-petName = petName.charAt(0).toUpperCase() + petName.slice(1);
-  const petType = stats.petType.charAt(0).toUpperCase() + stats.petType.slice(1);
+  let petName = getPetName(stats?.petType || "cat");
+  petName = petName.charAt(0).toUpperCase() + petName.slice(1);
+  const petType =
+    stats.petType.charAt(0).toUpperCase() + stats.petType.slice(1);
 
   return (
     <div className="text-center p-4 bg-gradient-to-r from-pink-100 to-purple-100 rounded-xl">
-      <div
-        className="text-6xl mb-2 animate-bounce"
-        onClick={onChangePetType}
-      >
+      <div className="text-6xl mb-2 animate-bounce" onClick={onChangePetType}>
         {petEmoji}
       </div>
       <div className="text-sm font-bold text-purple-700">

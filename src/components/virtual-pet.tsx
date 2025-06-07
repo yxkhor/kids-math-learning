@@ -1,20 +1,56 @@
 import React from "react";
 import { GameStats } from "../models/game-stats";
+import { getPetName } from "../utils/get-pet-name";
 
 interface VirtualPetProps {
   stats: GameStats;
-  getDifficultyRange: () => { min: number; max: number; label: string };
+  getDifficultyRange: () => { min: number; max: number; label: string };  
+  onChangePetType: () => void;
 }
 
-const VirtualPet: React.FC<VirtualPetProps> = ({ stats, getDifficultyRange }) => {
-  const petEmoji =
-    stats.petHappiness > 80
-      ? "😻"
-      : stats.petHappiness > 60
-      ? "😸"
-      : stats.petHappiness > 30
-      ? "😺"
-      : "😿";
+const VirtualPet: React.FC<VirtualPetProps> = ({
+  stats,
+  getDifficultyRange,
+  onChangePetType,
+}) => {
+  const getPetType = (petType, petHappiness) => {
+    switch (petType) {
+      case "cat":
+        return petHappiness > 80
+          ? "😻"
+          : petHappiness > 60
+          ? "😸"
+          : petHappiness > 30
+          ? "😺"
+          : "😿";
+      case "dog":
+        return petHappiness > 80
+          ? "🐶"
+          : petHappiness > 60
+          ? "🐕"
+          : petHappiness > 30
+          ? "🐕‍🦺"
+          : "🐾";
+      case "hamster":
+        return petHappiness > 80
+          ? "🐹"
+          : petHappiness > 60
+          ? "🐾"
+          : petHappiness > 30
+          ? "🐾"
+          : "🐾";
+      case "rabbit":
+        return petHappiness > 80
+          ? "🐰"
+          : petHappiness > 60
+          ? "🐇"
+          : petHappiness > 30
+          ? "🐇"
+          : "🐾";
+    }
+  };
+
+  const petEmoji = getPetType(stats.petType, stats.petHappiness);
   const petMood =
     stats.petHappiness > 80
       ? "Extremely Happy!"
@@ -24,11 +60,20 @@ const VirtualPet: React.FC<VirtualPetProps> = ({ stats, getDifficultyRange }) =>
       ? "Happy"
       : "Needs Care";
 
+let petName = getPetName(stats.petType);
+petName = petName.charAt(0).toUpperCase() + petName.slice(1);
+  const petType = stats.petType.charAt(0).toUpperCase() + stats.petType.slice(1);
+
   return (
     <div className="text-center p-4 bg-gradient-to-r from-pink-100 to-purple-100 rounded-xl">
-      <div className="text-6xl mb-2 animate-bounce">{petEmoji}</div>
+      <div
+        className="text-6xl mb-2 animate-bounce"
+        onClick={onChangePetType}
+      >
+        {petEmoji}
+      </div>
       <div className="text-sm font-bold text-purple-700">
-        Fluffy the Math Cat
+        {petName} the Math {petType}
       </div>
       <div className="text-xs text-purple-600 mb-2">{petMood}</div>
       <div className="w-full bg-gray-200 rounded-full h-3 mt-2">

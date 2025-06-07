@@ -1,6 +1,7 @@
 
 // Data type definitions
 export interface GameStats {
+  petType: 'cat' | 'dog' | 'hamster' | 'rabbit';
   totalQuestions: number;
   correctAnswers: number;
   stars: number;

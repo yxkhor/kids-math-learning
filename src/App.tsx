@@ -1,15 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
-import {
-  Star,
-  Trophy,
-  Heart,
-  Home,
-  Volume2,
-  VolumeX,
-  Zap,
-} from "lucide-react";
+import { Star, Trophy, Heart, Home, Volume2, VolumeX, Zap } from "lucide-react";
 import { GameStats } from "./models/game-stats";
 import VirtualPet from "./components/virtual-pet";
+import { getPetName } from "./utils/get-pet-name";
 
 interface Question {
   id: number;
@@ -42,6 +35,7 @@ const KidsMathGame = () => {
     return saved
       ? JSON.parse(saved)
       : {
+          petType: "cat",
           totalQuestions: 0,
           correctAnswers: 0,
           stars: 0,
@@ -57,6 +51,16 @@ const KidsMathGame = () => {
   useEffect(() => {
     localStorage.setItem("stats", JSON.stringify(stats));
   }, [stats]);
+
+  const handleChangePetType = () => {
+    const petTypes = ["cat", "dog", "hamster", "rabbit"];
+    const currentIndex = petTypes.indexOf(stats.petType);
+    const nextIndex = (currentIndex + 1) % petTypes.length;
+    setStats({
+      ...stats,
+      petType: petTypes[nextIndex] as GameStats["petType"],
+    });
+  };
 
   // Get difficulty range based on level and stats
   const getDifficultyRange = useCallback(() => {
@@ -236,6 +240,7 @@ const KidsMathGame = () => {
           100,
           correct ? prev.petHappiness + 5 : Math.max(0, prev.petHappiness - 2)
         ),
+        petType: prev.petType ?? "cat",
       };
 
       if (newStats.currentStreak > newStats.bestStreak) {
@@ -355,7 +360,11 @@ const KidsMathGame = () => {
               </div>
             </div>
           </div>
-          <VirtualPet stats={stats} getDifficultyRange={getDifficultyRange} />
+          <VirtualPet
+            stats={stats}
+            getDifficultyRange={getDifficultyRange}
+            onChangePetType={handleChangePetType}
+          />
         </div>
 
         <div className="grid md:grid-cols-5 gap-4">
@@ -423,7 +432,7 @@ const KidsMathGame = () => {
         <div className="mt-8 text-center">
           <div className="bg-white/50 rounded-xl p-4 inline-block">
             <p className="text-sm text-gray-700">
-              🎯 Answer questions correctly to earn stars and make Fluffy happy!
+              🎯 Answer questions correctly to earn stars and make {getPetName(stats.petType)} happy!
               <br />
               🏆 Collect 15 stars to level up! Multiplication & Division give 2
               stars each!

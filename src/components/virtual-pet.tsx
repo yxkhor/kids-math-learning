@@ -60,17 +60,17 @@ const VirtualPet: React.FC<VirtualPetProps> = ({
       ? "Happy"
       : "Needs Care";
 
-      const statsPetType = stats?.petType || "cat";
+  const statsPetType = stats?.petType || "cat";
   let petName = getPetName(statsPetType);
   petName = petName.charAt(0).toUpperCase() + petName.slice(1);
-  const petType =
-    statsPetType.charAt(0).toUpperCase() + statsPetType.slice(1);
+  const petType = statsPetType.charAt(0).toUpperCase() + statsPetType.slice(1);
 
   return (
-    <div className="text-center p-4 bg-gradient-to-r from-pink-100 to-purple-100 rounded-xl">
-      <div className="text-6xl mb-2 animate-bounce" onClick={onChangePetType}>
-        {petEmoji}
-      </div>
+    <div
+      className="text-center p-4 bg-gradient-to-r from-pink-100 to-purple-100 rounded-xl"
+      onClick={onChangePetType}
+    >
+      <div className="text-6xl mb-2 animate-bounce">{petEmoji}</div>
       <div className="text-sm font-bold text-purple-700">
         {petName} the Math {petType}
       </div>

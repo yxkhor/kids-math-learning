@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Star, Trophy, Heart, Home, Volume2, VolumeX, Zap } from "lucide-react";
 import { GameStats } from "./models/game-stats";
 import VirtualPet from "./components/virtual-pet";
@@ -29,42 +29,57 @@ const KidsMathGame = () => {
   const [isCorrect, setIsCorrect] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
+  const audioRef = useRef<HTMLAudioElement>(null);
+
   // Game statistics
   const [stats, setStats] = useState<GameStats>(() => {
     const saved = localStorage.getItem("stats");
     if (saved) {
-    const parsed = JSON.parse(saved);
-    // Ensure petType exists, default to "cat" if missing
+      const parsed = JSON.parse(saved);
+      // Ensure petType exists, default to "cat" if missing
+      return {
+        petType: parsed.petType ?? "cat",
+        totalQuestions: parsed.totalQuestions ?? 0,
+        correctAnswers: parsed.correctAnswers ?? 0,
+        stars: parsed.stars ?? 0,
+        level: parsed.level ?? 1,
+        achievements: parsed.achievements ?? [],
+        petHappiness: parsed.petHappiness ?? 50,
+        currentStreak: parsed.currentStreak ?? 0,
+        bestStreak: parsed.bestStreak ?? 0,
+        difficulty: parsed.difficulty ?? "easy",
+      };
+    }
     return {
-      petType: parsed.petType ?? "cat",
-      totalQuestions: parsed.totalQuestions ?? 0,
-      correctAnswers: parsed.correctAnswers ?? 0,
-      stars: parsed.stars ?? 0,
-      level: parsed.level ?? 1,
-      achievements: parsed.achievements ?? [],
-      petHappiness: parsed.petHappiness ?? 50,
-      currentStreak: parsed.currentStreak ?? 0,
-      bestStreak: parsed.bestStreak ?? 0,
-      difficulty: parsed.difficulty ?? "easy",
+      petType: "cat",
+      totalQuestions: 0,
+      correctAnswers: 0,
+      stars: 0,
+      level: 1,
+      achievements: [],
+      petHappiness: 50,
+      currentStreak: 0,
+      bestStreak: 0,
+      difficulty: "easy",
     };
-  }
-  return {
-    petType: "cat",
-    totalQuestions: 0,
-    correctAnswers: 0,
-    stars: 0,
-    level: 1,
-    achievements: [],
-    petHappiness: 50,
-    currentStreak: 0,
-    bestStreak: 0,
-    difficulty: "easy",
-  };
   });
 
   useEffect(() => {
     localStorage.setItem("stats", JSON.stringify(stats));
   }, [stats]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (soundEnabled) {
+      audio.volume = 0.2; // Lower volume for background
+      audio.loop = true;
+      audio.play().catch(() => {});
+    } else {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+  }, [soundEnabled]);
 
   const handleChangePetType = () => {
     const petTypes = ["cat", "dog", "hamster", "rabbit"];
@@ -446,7 +461,8 @@ const KidsMathGame = () => {
         <div className="mt-8 text-center">
           <div className="bg-white/50 rounded-xl p-4 inline-block">
             <p className="text-sm text-gray-700">
-              🎯 Answer questions correctly to earn stars and make {getPetName(stats.petType)} happy!
+              🎯 Answer questions correctly to earn stars and make{" "}
+              {getPetName(stats.petType)} happy!
               <br />
               🏆 Collect 15 stars to level up! Multiplication & Division give 2
               stars each!
@@ -635,6 +651,7 @@ const KidsMathGame = () => {
 
   return (
     <div>
+      <audio ref={audioRef} src="music.mp3" />
       {currentScreen === "home" && <HomePage />}
       {currentScreen === "game" && <GamePage />}
     </div>
